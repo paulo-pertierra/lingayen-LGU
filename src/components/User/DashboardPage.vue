@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 
-import AttendanceTime from "../User/DashboardPage/AttendanceTime.vue";
+// import AttendanceTime from "../User/DashboardPage/AttendanceTime.vue";
 import { ref } from "vue";
 import axios from "axios";
 import Swal from "sweetalert2";
@@ -10,16 +10,10 @@ const uuidRegExPattern = /^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0
 const invalidQrId = ref(false);
 const userId = ref(""); // User's UUID
 
-function timeIn() {
-  if (!userId.value.match(uuidRegExPattern)) {
-    invalidQrId.value = true;
-    setTimeout(() => {
-      invalidQrId.value = false;
-    }, 3000);
-    return;
-  }
+const user = JSON.parse(localStorage.getItem('user') || '{}')
 
-  axios.post(`/time/in/${userId.value}`).then((res) => {
+function timeIn() {
+  axios.post(`/time/in/${user.id}`).then((res) => {
     if (res.status === 200) {
       Swal.fire({
         icon: "success",
@@ -32,7 +26,7 @@ function timeIn() {
       return;
     }
     if (res.status === 202) {
-      axios.post(`/time/out/${userId.value}`).then((res) => {
+      axios.post(`/time/out/${user.id}`).then((res) => {
         if (res.status === 200) {
           Swal.fire({
             icon: "success",
